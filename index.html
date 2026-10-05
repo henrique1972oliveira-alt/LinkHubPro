@@ -1,0 +1,731 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub Pro - Vitrine & Bio Link</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 999px;
+        }
+        .theme-dark {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .theme-light {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .theme-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            color: #ffffff;
+        }
+        .theme-glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .device-frame {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans h-full antialiased flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white font-black text-xl shadow-md">
+                        L
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-none tracking-tight">LinkHub <span class="text-emerald-500">Pro</span></h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Vitrine de Produtos & Bio</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (Desktop & Mobile view switcher) -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="bg-slate-100 dark:bg-slate-700/50 p-1 rounded-xl flex items-center text-sm font-medium">
+                        <button id="tab-editor" onclick="switchMainTab('editor')" class="px-3 sm:px-4 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 shadow-sm transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-pen-to-square text-emerald-500"></i>
+                            <span class="hidden sm:inline">Editor & Admin</span>
+                        </button>
+                        <button id="tab-preview" onclick="switchMainTab('preview')" class="px-3 sm:px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                            <span class="hidden sm:inline">Ver Vitrine</span>
+                        </button>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button onclick="copyPublicLink()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span class="hidden md:inline">Copiar Link</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col md:flex-row gap-6 overflow-hidden">
+        
+        <!-- ========================================== -->
+        <!-- LEFT PANEL: ADMIN / EDITOR SECTION -->
+        <!-- ========================================== -->
+        <section id="editor-section" class="flex-1 overflow-y-auto space-y-6 pr-1">
+            
+            <!-- Quick Stats Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-500 rounded-xl">
+                        <i class="fa-solid fa-eye text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Visualizações</p>
+                        <h4 id="stat-views" class="text-xl font-bold">0</h4>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-500 rounded-xl">
+                        <i class="fa-solid fa-arrow-pointer text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Cliques Totais</p>
+                        <h4 id="stat-clicks" class="text-xl font-bold">0</h4>
+                    </div>
+                </div>
+                <div class="col-span-2 sm:col-span-1 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-purple-50 dark:bg-purple-950/50 text-purple-500 rounded-xl">
+                        <i class="fa-solid fa-box-open text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Produtos</p>
+                        <h4 id="stat-products" class="text-xl font-bold">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Settings Accordion / Card -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                    <h3 class="font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-emerald-500"></i>
+                        Perfil do Criador
+                    </h3>
+                    <span class="text-xs text-slate-400">Edite suas informações</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Nome do Criador/Loja</label>
+                        <input type="text" id="input-name" placeholder="Ex: Ana Silva Afiliada" oninput="updateProfile()" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Foto de Perfil (URL)</label>
+                        <input type="text" id="input-avatar" placeholder="https://..." oninput="updateProfile()" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Biografia Curta</label>
+                        <textarea id="input-bio" rows="2" placeholder="Ex: Encontre os melhores achadinhos e cupons exclusivos da Shopee e Amazon!" oninput="updateProfile()" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Redes Sociais -->
+                <div class="pt-2">
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Redes Sociais (URLs)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="relative">
+                            <i class="fa-brands fa-instagram absolute left-3 top-2.5 text-pink-500"></i>
+                            <input type="text" id="input-social-instagram" placeholder="Instagram URL" oninput="updateProfile()" class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div class="relative">
+                            <i class="fa-brands fa-tiktok absolute left-3 top-2.5 text-slate-900 dark:text-slate-100"></i>
+                            <input type="text" id="input-social-tiktok" placeholder="TikTok URL" oninput="updateProfile()" class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div class="relative">
+                            <i class="fa-brands fa-whatsapp absolute left-3 top-2.5 text-emerald-500"></i>
+                            <input type="text" id="input-social-whatsapp" placeholder="WhatsApp / Grupo" oninput="updateProfile()" class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization & Theme Select -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-3">
+                <h3 class="font-bold text-base flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-3">
+                    <i class="fa-solid fa-palette text-emerald-500"></i>
+                    Aparência da Vitrine
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="setTheme('theme-light')" class="theme-btn border-2 border-emerald-500 bg-slate-100 p-3 rounded-xl flex flex-col items-center gap-1 hover:opacity-90 transition">
+                        <div class="w-6 h-6 rounded-full bg-white border border-slate-300"></div>
+                        <span class="text-xs font-semibold text-slate-800">Claro</span>
+                    </button>
+                    <button onclick="setTheme('theme-dark')" class="theme-btn border-2 border-transparent bg-slate-800 p-3 rounded-xl flex flex-col items-center gap-1 hover:opacity-90 transition">
+                        <div class="w-6 h-6 rounded-full bg-slate-900 border border-slate-700"></div>
+                        <span class="text-xs font-semibold text-slate-100">Escuro</span>
+                    </button>
+                    <button onclick="setTheme('theme-gradient')" class="theme-btn border-2 border-transparent bg-gradient-to-r from-indigo-500 to-pink-500 p-3 rounded-xl flex flex-col items-center gap-1 hover:opacity-90 transition">
+                        <div class="w-6 h-6 rounded-full bg-pink-400"></div>
+                        <span class="text-xs font-semibold text-white">Vibrante</span>
+                    </button>
+                    <button onclick="setTheme('theme-glass')" class="theme-btn border-2 border-transparent bg-emerald-900/80 p-3 rounded-xl flex flex-col items-center gap-1 hover:opacity-90 transition">
+                        <div class="w-6 h-6 rounded-full bg-emerald-500/50 backdrop-blur-md"></div>
+                        <span class="text-xs font-semibold text-white">Vidro Dark</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add/Edit Product Card -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                    <h3 id="form-product-title" class="font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-cart-plus text-emerald-500"></i>
+                        Adicionar Novo Produto / Banner
+                    </h3>
+                    <button id="cancel-edit-btn" onclick="resetProductForm()" class="hidden text-xs text-rose-500 hover:underline">Cancelar Edição</button>
+                </div>
+
+                <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4">
+                    <input type="hidden" id="prod-id">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Título do Produto / Banner *</label>
+                            <input type="text" id="prod-title" required placeholder="Ex: Fone Bluetooth Sem Fio" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Categoria *</label>
+                            <input type="text" id="prod-category" required placeholder="Ex: Eletrônicos, Moda, Oferta" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" list="categories-list">
+                            <datalist id="categories-list">
+                                <option value="Promoções do Dia">
+                                <option value="Eletrônicos">
+                                <option value="Moda & Beleza">
+                                <option value="Casa & Decoração">
+                                <option value="Mais Vendidos">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Preço R$ (Opcional)</label>
+                            <input type="text" id="prod-price" placeholder="Ex: 89,90 ou Grátis" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Imagem URL (Opcional)</label>
+                            <input type="text" id="prod-image" placeholder="https://..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Link de Afiliado / Destino (URL) *</label>
+                            <input type="url" id="prod-link" required placeholder="https://shopee.com.br/..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3 pt-2">
+                        <label class="flex items-center space-x-2 text-xs font-medium text-slate-600 dark:text-slate-300 cursor-pointer">
+                            <input type="checkbox" id="prod-featured" class="w-4 h-4 text-emerald-500 rounded focus:ring-emerald-400">
+                            <span>Destacar Produto (Badge de 'Destaque')</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="save-btn" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span id="save-btn-text">Adicionar à Vitrine</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Product List in Editor -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                    <h3 class="font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-500"></i>
+                        Seus Links & Produtos
+                    </h3>
+                    <button onclick="clearAllData()" class="text-xs text-slate-400 hover:text-rose-500 transition">Resetar Tudo</button>
+                </div>
+
+                <div id="admin-product-list" class="space-y-3">
+                    <!-- Dynamic List of products for admin control -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- RIGHT PANEL: MOBILE PREVIEW CONTAINER -->
+        <!-- ========================================== -->
+        <section id="preview-section" class="flex-1 flex justify-center items-start overflow-y-auto hidden md:flex">
+            <div class="sticky top-20 w-full max-w-[380px]">
+                <!-- Phone Mockup Frame -->
+                <div class="device-frame bg-slate-900 border-[8px] border-slate-800 rounded-[40px] p-3 shadow-2xl relative">
+                    <!-- Camera Punch Hole -->
+                    <div class="absolute top-5 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-full z-20 flex items-center justify-center">
+                        <div class="w-3 h-3 bg-slate-800 rounded-full mr-2"></div>
+                        <div class="w-2 h-2 bg-blue-900/40 rounded-full"></div>
+                    </div>
+
+                    <!-- Phone Screen Content Area -->
+                    <div id="mobile-screen" class="w-full h-[660px] rounded-[30px] overflow-y-auto relative p-4 transition-all duration-300 theme-light">
+                        
+                        <!-- Profile Header Preview -->
+                        <div class="text-center pt-6 pb-4 space-y-2">
+                            <div class="relative inline-block">
+                                <img id="preview-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-2 border-emerald-500 mx-auto shadow-md">
+                                <div class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+                            </div>
+                            <div>
+                                <h2 id="preview-name" class="font-bold text-lg leading-tight">Ana Silva</h2>
+                                <p id="preview-bio" class="text-xs opacity-80 mt-1 max-w-[240px] mx-auto">Seleção diária dos melhores produtos e ofertas com descontos imperdíveis!</p>
+                            </div>
+
+                            <!-- Social Icons -->
+                            <div class="flex items-center justify-center space-x-3 pt-2 text-base">
+                                <a id="preview-social-instagram" href="#" target="_blank" class="hover:scale-110 transition"><i class="fa-brands fa-instagram"></i></a>
+                                <a id="preview-social-tiktok" href="#" target="_blank" class="hover:scale-110 transition"><i class="fa-brands fa-tiktok"></i></a>
+                                <a id="preview-social-whatsapp" href="#" target="_blank" class="hover:scale-110 transition"><i class="fa-brands fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+
+                        <!-- Search and Filter Bar -->
+                        <div class="space-y-2 mb-4">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs opacity-50"></i>
+                                <input type="text" id="preview-search" oninput="filterProducts()" placeholder="Buscar produtos..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-black/5 dark:bg-white/10 border-0 focus:outline-none placeholder:text-current placeholder:opacity-50">
+                            </div>
+                            
+                            <!-- Categories Chips Filter -->
+                            <div id="preview-categories" class="flex space-x-1.5 overflow-x-auto pb-1 text-[11px] scrollbar-none">
+                                <!-- Dynamic category buttons -->
+                            </div>
+                        </div>
+
+                        <!-- Products List Container in Preview -->
+                        <div id="preview-product-list" class="space-y-3 pb-8">
+                            <!-- Dynamic Cards rendered here -->
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="text-center pt-4 pb-2 border-t border-black/10 dark:border-white/10">
+                            <p class="text-[10px] opacity-60">Criado com LinkHub Pro</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Notification / Alert -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message" class="text-sm font-medium">Ação realizada com sucesso!</span>
+    </div>
+
+    <script>
+        // Default initial data
+        const defaultData = {
+            profile: {
+                name: "Ana Silva | Achadinhos",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+                bio: "✨ Dicas de moda, casa e tecnologia! Clique nos links abaixo para ver os produtos com os melhores preços.",
+                theme: "theme-light",
+                views: 1420,
+                totalClicks: 389,
+                socials: {
+                    instagram: "https://instagram.com",
+                    tiktok: "https://tiktok.com",
+                    whatsapp: "https://whatsapp.com"
+                }
+            },
+            products: [
+                {
+                    id: "1",
+                    title: "Fone de Ouvido Bluetooth Sem Fio TWS",
+                    category: "Eletrônicos",
+                    price: "79,90",
+                    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300",
+                    link: "https://shopee.com.br",
+                    featured: true,
+                    clicks: 124
+                },
+                {
+                    id: "2",
+                    title: "Luminária Por do Sol Sunset Lamp",
+                    category: "Casa & Decoração",
+                    price: "45,00",
+                    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300",
+                    link: "https://amazon.com.br",
+                    featured: false,
+                    clicks: 87
+                },
+                {
+                    id: "3",
+                    title: "Kit Organizador de Acrílico Maquiagem",
+                    category: "Moda & Beleza",
+                    price: "59,90",
+                    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300",
+                    link: "https://shein.com",
+                    featured: false,
+                    clicks: 65
+                }
+            ]
+        };
+
+        // Application State
+        let appData = JSON.parse(localStorage.getItem('linkhub_data')) || defaultData;
+        let selectedCategory = 'Todos';
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProfileToEditor();
+            renderAdminProducts();
+            renderPreview();
+            updateStats();
+        });
+
+        // Save State to LocalStorage
+        function saveData() {
+            localStorage.setItem('linkhub_data', JSON.stringify(appData));
+            renderPreview();
+            renderAdminProducts();
+            updateStats();
+        }
+
+        // Show Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Switch Tabs for Mobile View
+        function switchMainTab(tab) {
+            const editorSection = document.getElementById('editor-section');
+            const previewSection = document.getElementById('preview-section');
+            const tabEditor = document.getElementById('tab-editor');
+            const tabPreview = document.getElementById('tab-preview');
+
+            if (tab === 'editor') {
+                editorSection.classList.remove('hidden');
+                previewSection.classList.add('hidden', 'md:flex');
+                
+                tabEditor.className = "px-3 sm:px-4 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 shadow-sm transition-all flex items-center space-x-2";
+                tabPreview.className = "px-3 sm:px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all flex items-center space-x-2";
+            } else {
+                editorSection.classList.add('hidden');
+                previewSection.classList.remove('hidden');
+                previewSection.classList.add('flex');
+
+                tabPreview.className = "px-3 sm:px-4 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 shadow-sm transition-all flex items-center space-x-2";
+                tabEditor.className = "px-3 sm:px-4 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all flex items-center space-x-2";
+            }
+        }
+
+        // Populate Editor Profile Fields
+        function loadProfileToEditor() {
+            document.getElementById('input-name').value = appData.profile.name || '';
+            document.getElementById('input-avatar').value = appData.profile.avatar || '';
+            document.getElementById('input-bio').value = appData.profile.bio || '';
+            document.getElementById('input-social-instagram').value = appData.profile.socials.instagram || '';
+            document.getElementById('input-social-tiktok').value = appData.profile.socials.tiktok || '';
+            document.getElementById('input-social-whatsapp').value = appData.profile.socials.whatsapp || '';
+        }
+
+        // Update Profile Info in State
+        function updateProfile() {
+            appData.profile.name = document.getElementById('input-name').value;
+            appData.profile.avatar = document.getElementById('input-avatar').value || 'https://placehold.co/150x150/22c55e/white?text=Foto';
+            appData.profile.bio = document.getElementById('input-bio').value;
+            appData.profile.socials.instagram = document.getElementById('input-social-instagram').value;
+            appData.profile.socials.tiktok = document.getElementById('input-social-tiktok').value;
+            appData.profile.socials.whatsapp = document.getElementById('input-social-whatsapp').value;
+            saveData();
+        }
+
+        // Set Theme Mode
+        function setTheme(themeName) {
+            appData.profile.theme = themeName;
+            
+            // Update active state border on theme buttons
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('border-emerald-500');
+                btn.classList.add('border-transparent');
+            });
+            event.currentTarget.classList.add('border-emerald-500');
+            event.currentTarget.classList.remove('border-transparent');
+
+            saveData();
+            showToast('Tema atualizado!');
+        }
+
+        // Save or Update Product
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const title = document.getElementById('prod-title').value;
+            const category = document.getElementById('prod-category').value;
+            const price = document.getElementById('prod-price').value;
+            const image = document.getElementById('prod-image').value || 'https://placehold.co/300x300/e2e8f0/64748b?text=Produto';
+            const link = document.getElementById('prod-link').value;
+            const featured = document.getElementById('prod-featured').checked;
+
+            if (id) {
+                // Update existing
+                const index = appData.products.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    appData.products[index] = { ...appData.products[index], title, category, price, image, link, featured };
+                    showToast('Produto atualizado!');
+                }
+            } else {
+                // Create new
+                const newProduct = {
+                    id: Date.now().toString(),
+                    title,
+                    category,
+                    price,
+                    image,
+                    link,
+                    featured,
+                    clicks: 0
+                };
+                appData.products.unshift(newProduct);
+                showToast('Novo produto adicionado!');
+            }
+
+            resetProductForm();
+            saveData();
+        }
+
+        // Edit Product
+        function editProduct(id) {
+            const prod = appData.products.find(p => p.id === id);
+            if (!prod) return;
+
+            document.getElementById('prod-id').value = prod.id;
+            document.getElementById('prod-title').value = prod.title;
+            document.getElementById('prod-category').value = prod.category;
+            document.getElementById('prod-price').value = prod.price || '';
+            document.getElementById('prod-image').value = prod.image || '';
+            document.getElementById('prod-link').value = prod.link;
+            document.getElementById('prod-featured').checked = prod.featured;
+
+            document.getElementById('form-product-title').innerHTML = `<i class="fa-solid fa-pen text-emerald-500"></i> Editar Produto`;
+            document.getElementById('save-btn-text').innerText = 'Salvar Alterações';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+        }
+
+        // Reset Form
+        function resetProductForm() {
+            document.getElementById('product-form').reset();
+            document.getElementById('prod-id').value = '';
+            document.getElementById('form-product-title').innerHTML = `<i class="fa-solid fa-cart-plus text-emerald-500"></i> Adicionar Novo Produto / Banner`;
+            document.getElementById('save-btn-text').innerText = 'Adicionar à Vitrine';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        }
+
+        // Delete Product
+        function deleteProduct(id) {
+            appData.products = appData.products.filter(p => p.id !== id);
+            saveData();
+            showToast('Produto removido');
+        }
+
+        // Render Admin Product List
+        function renderAdminProducts() {
+            const container = document.getElementById('admin-product-list');
+            if (appData.products.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 text-slate-400 text-xs">
+                        <i class="fa-solid fa-box text-2xl mb-1 block"></i>
+                        Nenhum produto cadastrado ainda.
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = appData.products.map(p => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <img src="${p.image}" onerror="this.src='https://placehold.co/100'" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+                        <div class="truncate">
+                            <div class="flex items-center space-x-2">
+                                <h4 class="font-semibold text-xs text-slate-800 dark:text-slate-100 truncate">${p.title}</h4>
+                                ${p.featured ? '<span class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded font-bold">Destaque</span>' : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                <span class="text-emerald-500 font-medium">${p.price ? 'R$ ' + p.price : 'Link'}</span> • 
+                                Category: ${p.category}
+                            </p>
+                            <span class="text-[10px] text-slate-400"><i class="fa-solid fa-arrow-pointer"></i> ${p.clicks || 0} cliques</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 pl-2">
+                        <button onclick="editProduct('${p.id}')" class="p-2 text-slate-400 hover:text-emerald-500 transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct('${p.id}')" class="p-2 text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Mobile Preview View
+        function renderPreview() {
+            // Update Profile Elements
+            document.getElementById('preview-name').innerText = appData.profile.name || 'Seu Nome';
+            document.getElementById('preview-avatar').src = appData.profile.avatar || 'https://placehold.co/150';
+            document.getElementById('preview-bio').innerText = appData.profile.bio || '';
+
+            // Update Social Icons Visibility
+            const insta = document.getElementById('preview-social-instagram');
+            const tiktok = document.getElementById('preview-social-tiktok');
+            const whatsapp = document.getElementById('preview-social-whatsapp');
+
+            insta.style.display = appData.profile.socials.instagram ? 'inline-block' : 'none';
+            insta.href = appData.profile.socials.instagram || '#';
+
+            tiktok.style.display = appData.profile.socials.tiktok ? 'inline-block' : 'none';
+            tiktok.href = appData.profile.socials.tiktok || '#';
+
+            whatsapp.style.display = appData.profile.socials.whatsapp ? 'inline-block' : 'none';
+            whatsapp.href = appData.profile.socials.whatsapp || '#';
+
+            // Apply Theme
+            const screen = document.getElementById('mobile-screen');
+            screen.className = `w-full h-[660px] rounded-[30px] overflow-y-auto relative p-4 transition-all duration-300 ${appData.profile.theme}`;
+
+            // Render Categories Chips
+            renderCategoriesFilter();
+
+            // Filter Products
+            const searchQuery = (document.getElementById('preview-search')?.value || '').toLowerCase();
+            let filtered = appData.products.filter(p => {
+                const matchesCategory = selectedCategory === 'Todos' || p.category === selectedCategory;
+                const matchesSearch = p.title.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Render Product Cards
+            const container = document.getElementById('preview-product-list');
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs opacity-60 py-8">Nenhum produto encontrado.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => `
+                <div class="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl p-3 shadow-sm border border-black/5 dark:border-white/10 flex items-center gap-3 transition hover:scale-[1.02]">
+                    ${p.featured ? '<span class="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">Destaque</span>' : ''}
+                    <img src="${p.image}" onerror="this.src='https://placehold.co/100'" class="w-16 h-16 rounded-xl object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <span class="text-[9px] font-semibold tracking-wider text-emerald-500 uppercase">${p.category}</span>
+                        <h3 class="font-bold text-xs leading-snug truncate text-slate-800 dark:text-slate-100">${p.title}</h3>
+                        ${p.price ? `<p class="text-xs font-black text-emerald-600 dark:text-emerald-400 mt-0.5">R$ ${p.price}</p>` : ''}
+                    </div>
+                    <a href="${p.link}" target="_blank" onclick="registerClick('${p.id}')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center flex-shrink-0 transition active:scale-95">
+                        Ver
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // Render Categories Filters Chips
+        function renderCategoriesFilter() {
+            const categories = ['Todos', ...new Set(appData.products.map(p => p.category))];
+            const container = document.getElementById('preview-categories');
+
+            container.innerHTML = categories.map(cat => `
+                <button onclick="setCategoryFilter('${cat}')" class="px-3 py-1 rounded-full whitespace-nowrap transition text-xs font-medium ${selectedCategory === cat ? 'bg-emerald-500 text-white shadow-sm' : 'bg-black/5 dark:bg-white/10 hover:bg-black/10'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function setCategoryFilter(cat) {
+            selectedCategory = cat;
+            renderPreview();
+        }
+
+        function filterProducts() {
+            renderPreview();
+        }
+
+        // Track Click Events
+        function registerClick(productId) {
+            appData.profile.totalClicks = (appData.profile.totalClicks || 0) + 1;
+            const prod = appData.products.find(p => p.id === productId);
+            if (prod) {
+                prod.clicks = (prod.clicks || 0) + 1;
+            }
+            saveData();
+        }
+
+        // Update Stats Counters
+        function updateStats() {
+            document.getElementById('stat-views').innerText = appData.profile.views || 0;
+            document.getElementById('stat-clicks').innerText = appData.profile.totalClicks || 0;
+            document.getElementById('stat-products').innerText = appData.products.length || 0;
+        }
+
+        // Copy Shareable Link Simulation
+        function copyPublicLink() {
+            const dummyLink = window.location.href;
+            const el = document.createElement('textarea');
+            el.value = dummyLink;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast('Link da sua vitrine copiado!');
+        }
+
+        // Reset Data to Default
+        function clearAllData() {
+            if (confirm('Tem certeza que deseja restaurar as configurações padrão?')) {
+                appData = JSON.parse(JSON.stringify(defaultData));
+                saveData();
+                loadProfileToEditor();
+                showToast('Dados restaurados!');
+            }
+        }
+    </script>
+</body>
+</html>
+```
